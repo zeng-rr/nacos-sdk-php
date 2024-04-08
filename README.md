@@ -5,20 +5,27 @@
 * 服务参考地址：https://help.aliyun.com/product/123350.html
 * nacos开发文档：https://nacos.io/zh-cn/docs/open-api.html
 * 本组件可以用于laravel 框架，也可以用于非laravel框架。
-* 云配置参考 https://help.aliyun.com/product/123350.html
 
 ### 安装
-* 首先在项目`composer.json` 文件的根节点下添加`repositories`对象,组件的git地址作为源，并且优先级要高于 `packagist`,如：
+* 首先在项目`composer.json` 文件的根节点下添加`repositories`对象,如：
 ```javascript
 {
-    "repositories": {
-        "0": {
-            "type": "git",
-            "url": "https://codes.your-codes-hub.domain/alicloud/n8config-monitor.git"  //您的私有代码库
-        },   
-        "packagist": {
-            "type": "composer",
-            "url": "https://mirrors.aliyun.com/composer/"
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "nacos-group/nacos-sdk-php",
+                "version": "1.0.0",
+                "dist": {
+                    "url": "https://github.com/zeng-rr/nacos-sdk-php/archive/refs/tags/v1.0.0.zip",
+                    "type": "zip"
+                }
+            }
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Alicloud\\ConfigMonitor\\": "vendor/alicloud/config-monitor/src/"
         }
     }
     
@@ -26,7 +33,7 @@
 }
 ```
 
-* 执行组件安装命令：`composer require alicloud/n8config-monitor`
+* 执行组件安装命令：`composer require nacos-group/nacos-sdk-php`
     * 如果报无安装权限，则执行 `composer config secure-http false`,表示关闭Https访问限制。
     * 如果`guzzlehttp/guzzle`版本低于`6.5`请升级 `composer update guzzlehttp/guzzle 6.5`
 
