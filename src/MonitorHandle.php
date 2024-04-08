@@ -22,7 +22,7 @@ class MonitorHandle
 {
     
     //轮询时间
-    protected $pullingSenonds = 30;
+    protected $pullingSeconds = 30;
 
     //nacos请求地址，包括端口
     protected $nacosHost = null;
@@ -51,11 +51,11 @@ class MonitorHandle
      * @param string  $dataId 数据集id
      * @param string  $changeToEnvFile  实际要用于变更的 项目env文件
      * @param string  $group 分组名
-     * @param integer $pullingSenonds  轮询时间 默认30秒
+     * @param integer $pullingSeconds  轮询时间 默认30秒
      * @param string  $env 是本地的环境，不同的环境会生成不同的快照目录
      * @throws
      */
-    public function __construct($host, $nameSpaceId, $dataId, $changeToEnvFile = '', $group = 'DEFAULT_GROUP', $pullingSenonds = 30, $env = 'dev')
+    public function __construct($host, $nameSpaceId, $dataId, $changeToEnvFile = '', $group = 'DEFAULT_GROUP', $pullingSeconds = 30, $env = 'dev')
     {
         if (!empty($changeToEnvFile)){
             $dirinfo = pathinfo($changeToEnvFile);
@@ -66,9 +66,9 @@ class MonitorHandle
         }
 
         //轮询时间
-        $pullingSenonds = intval($pullingSenonds);
-        $pullingSenonds = ($pullingSenonds >30  || $pullingSenonds <5) ? 30 : $pullingSenonds;
-        $this->pullingSenonds = $pullingSenonds;
+        $pullingSeconds = intval($pullingSeconds);
+        $pullingSeconds = ($pullingSeconds >60  || $pullingSeconds <1) ? 30 : $pullingSeconds;
+        $this->pullingSeconds = $pullingSeconds;
 
         //初始化一些值
         $this->nacosHost = $host;
@@ -79,7 +79,7 @@ class MonitorHandle
         
         //设置值，其它参数在init中传入
         NacosConfig::setIsDebug(false);
-        NacosConfig::setLongPullingTimeout($pullingSenonds * 1000);
+        NacosConfig::setLongPullingTimeout($pullingSeconds * 1000);
         
     }
     
@@ -110,7 +110,7 @@ class MonitorHandle
         });
     
     
-        LogUtil::info(sprintf("配置监听中，长轮询时间为%s秒 ... %s", $this->pullingSenonds, PHP_EOL));
+        LogUtil::info(sprintf("配置监听中，长轮询时间为%s秒 ... %s", $this->pullingSeconds, PHP_EOL));
         Nacos::init(
             $this->nacosHost,
             $this->env,
