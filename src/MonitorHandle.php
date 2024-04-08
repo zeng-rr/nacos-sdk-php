@@ -46,32 +46,17 @@ class MonitorHandle
     /**
      * 初始化配置
      * MonitorHandle constructor.
-     * @param string  $snapshotPath 配置文件快照存储地点
+     * @param string  $host 访问地址, IP需加端口
+     * @param string  $nameSpaceId 命名空间id
+     * @param string  $dataId 数据集id
      * @param string  $changeToEnvFile  实际要用于变更的 项目env文件
-     * @param integer  $pullingSenonds  轮询时间 默认30秒
+     * @param string  $group 分组名
+     * @param integer $pullingSenonds  轮询时间 默认30秒
      * @param string  $env 是本地的环境，不同的环境会生成不同的快照目录
      * @throws
      */
-    public function __construct($snapshotPath, $changeToEnvFile='', $pullingSenonds=30, $env='def')
+    public function __construct($host, $nameSpaceId, $dataId, $changeToEnvFile = '', $group = 'DEFAULT_GROUP', $pullingSenonds = 30, $env = 'dev')
     {
-        //这些环境变量不能为空（除了AK,SK外其它项每台服务器都可能不一样的）
-        $envVars = [
-            'ak'        => getenv('ALI_MSE_AK'),
-            'sk'        => getenv('ALI_MSE_SK'),
-            'host'      => getenv('ALI_MSE_HOST'),
-            'data_id'   => getenv('ALI_MSE_DATA_ID'),
-            'group'     => getenv('ALI_MSE_GROUP'),
-        ];
-        $nameSpaceId = getenv('ALI_MSE_NAME_SPACE_ID') ?: '';    //这个可以为空
-        foreach ($envVars as $name=>$val) {
-            if (empty($val)){
-                throw new \Exception(sprintf("无法获取到环境变量:%s", $name), 1);
-            }
-        }
-        if (!is_dir($snapshotPath)){
-            throw new \Exception('snapshotPath 应该是一个有效路径', 1);
-        }
-    
         if (!empty($changeToEnvFile)){
             $dirinfo = pathinfo($changeToEnvFile);
             if (!is_dir($dirinfo['dirname'])){
@@ -79,24 +64,20 @@ class MonitorHandle
             }
             $this->changeToEnvFile = $changeToEnvFile;
         }
-    
-    
-    
+
         //轮询时间
         $pullingSenonds = intval($pullingSenonds);
         $pullingSenonds = ($pullingSenonds >30  || $pullingSenonds <5) ? 30 : $pullingSenonds;
         $this->pullingSenonds = $pullingSenonds;
+
         //初始化一些值
-        $this->nacosHost = $envVars['host'];
-        $this->dataId   = $envVars['data_id'];
+        $this->nacosHost = $host;
+        $this->dataId   = $dataId;
         $this->env      = $env;
         $this->nameSpaceId = $nameSpaceId;
-        $this->group = $envVars['group'];
+        $this->group = $group;
         
         //设置值，其它参数在init中传入
-        NacosConfig::setAk($envVars['ak']);
-        NacosConfig::setSk($envVars['sk']);
-        NacosConfig::setSnapshotPath($snapshotPath);
         NacosConfig::setIsDebug(false);
         NacosConfig::setLongPullingTimeout($pullingSenonds * 1000);
         
@@ -104,8 +85,10 @@ class MonitorHandle
     
     /**
      * 执行监听
+     * @param bool $polling 是否进行长监听, 否则只监听一次
+     * @param string|null $currentConf 当前配置文件内容, 默认从快照读取, 用于监听内容对比
      */
-    public function listenNotify()
+    public function listenNotify($polling = true, $currentConf = null)
     {
         //注册一个出错通知
         GetConfigRequestErrorListener::add(function($config) {
@@ -134,7 +117,7 @@ class MonitorHandle
             $this->dataId,
             $this->group,
             $this->nameSpaceId
-        )->listener();
+        )->listener($polling, $currentConf);
         
     }
     

@@ -12,6 +12,16 @@ use Monolog\Logger;
 class NacosConfig
 {
     /**
+     * @var string 用户名
+     */
+    private static $username = '';
+    
+    /**
+     * @var string 密码
+     */
+    private static $password = '';
+
+    /**
      * @var string AK
      */
     private static $accessKey = '';
@@ -87,6 +97,37 @@ class NacosConfig
      */
     private static $isDebug = false;
     
+    /**
+     * @return string
+     */
+    public static function getUsername()
+    {
+        return self::$username;
+    }
+    
+    /**
+     * @param string
+     */
+    public static function setUsername($username)
+    {
+        self::$username = $username;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getPassword()
+    {
+        return self::$password;
+    }
+    
+    /**
+     * @param string
+     */
+    public static function setPassword($password)
+    {
+        self::$password = $password;
+    }
     
     /**
      * @return string

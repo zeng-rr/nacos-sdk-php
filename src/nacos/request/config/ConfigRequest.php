@@ -88,11 +88,18 @@ class ConfigRequest extends Request
             'Client-Version'         => '0.0.1',
             'Content-Type'           => 'application/x-www-form-urlencoded; charset=utf-8',
             'exConfigInfo'           => 'true',
-            'Spas-AccessKey'         => NacosConfig::getAk(),
             'timeStamp'              => $timeStamp,
-            'Spas-Signature' => $this->_makeSign(NacosConfig::getTenant(), NacosConfig::getGroup(), $timeStamp)
         ];
+        if (!empty($ak = NacosConfig::getAk()) && !empty(NacosConfig::getSk())) {
+            $headers['Spas-AccessKey'] = $ak;
+            $headers['Spas-Signature'] = $this->_makeSign(NacosConfig::getTenant(), NacosConfig::getGroup(), $timeStamp);
+        }
+
         $parameterList = [];
+        if (!empty($username = NacosConfig::getUsername()) && !empty($password = NacosConfig::getPassword())) {
+            $parameterList['username'] = $username;
+            $parameterList['password'] = $password;
+        }
 
         $properties = ReflectionUtil::getProperties($this);
         foreach ($properties as $propertyName => $propertyValue) {

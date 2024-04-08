@@ -43,10 +43,10 @@ class Nacos
         return call_user_func_array([self::$clientClass, "get"], [NacosConfig::getEnv(), NacosConfig::getDataId(), NacosConfig::getGroup(), NacosConfig::getTenant()]);
     }
 
-    public function listener()
+    public function listener($polling = true, $currenConf = null)
     {
-        $currenConf = LocalConfigInfoProcessor::getSnapshot(NacosConfig::getEnv(), NacosConfig::getDataId(), NacosConfig::getGroup(), NacosConfig::getTenant());
-        call_user_func_array([self::$clientClass, "listener"], [NacosConfig::getEnv(), NacosConfig::getDataId(), NacosConfig::getGroup(), $currenConf, NacosConfig::getTenant()]);
+        !$currenConf && $currenConf = LocalConfigInfoProcessor::getSnapshot(NacosConfig::getEnv(), NacosConfig::getDataId(), NacosConfig::getGroup(), NacosConfig::getTenant());
+        call_user_func_array([self::$clientClass, "listener"], [NacosConfig::getEnv(), NacosConfig::getDataId(), NacosConfig::getGroup(), $currenConf, NacosConfig::getTenant(), $polling]);
         return $this;
     }
 

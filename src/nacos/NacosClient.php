@@ -23,7 +23,7 @@ use Alicloud\ConfigMonitor\nacos\listener\config\ListenerConfigRequestErrorListe
  */
 class NacosClient implements NacosClientInterface
 {
-    public static function listener($env, $dataId, $group, $config, $tenant = "")
+    public static function listener($env, $dataId, $group, $config, $tenant = "", $polling = true)
     {
         $loop = 0;
         do {
@@ -61,7 +61,7 @@ class NacosClient implements NacosClientInterface
                 sleep(4);
             }
             LogUtil::info("listener loop count: " . $loop);
-        } while (true);
+        } while ($polling);
     }
     
     
