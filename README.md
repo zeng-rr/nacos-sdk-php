@@ -14,7 +14,7 @@
         {
             "type": "package",
             "package": {
-                "name": "nacos-group/nacos-sdk-php",
+                "name": "alicloud/config-monitor",
                 "version": "1.0.0",
                 "dist": {
                     "url": "https://github.com/zeng-rr/nacos-sdk-php/archive/refs/tags/v1.0.0.zip",
