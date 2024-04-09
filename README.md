@@ -33,7 +33,7 @@
 }
 ```
 
-* 执行组件安装命令：`composer require nacos-group/nacos-sdk-php`
+* 执行组件安装命令：`composer require alicloud/config-monitor`
     * 如果报无安装权限，则执行 `composer config secure-http false`,表示关闭Https访问限制。
     * 如果`guzzlehttp/guzzle`版本低于`6.5`请升级 `composer update guzzlehttp/guzzle 6.5`
 
